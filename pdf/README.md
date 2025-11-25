@@ -14,6 +14,11 @@ pdflatex
 latexmk 
 ```
 
+```shell
+sudo apt update
+sudo apt install g++ texlive-latex-base texlive-latex-recommended texlive-latex-extra latexmk texlive-fonts-extra texlive-lang-portuguese
+```
+
 ## 📑 Escolher códigos que serão incluídos no PDF 
 
 Para escolher o que entra no pdf ou não, edite o arquivo [contents.txt](contents.txt).

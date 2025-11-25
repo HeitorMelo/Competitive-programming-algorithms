@@ -1,0 +1,15 @@
+template.cpp
+py.py
+in
+out
+a.exe
+contents.tex
+notebook.*
+!notebook.pdf
+!notebook.tex
+.vscode
+texput.log
+texput.fls
+Notebook.pdf
+pdf/temp
+*.exe

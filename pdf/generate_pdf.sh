@@ -12,7 +12,7 @@ rm contents.tex
 mv notebook.tex _notebook.tex
 rm notebook.*
 mv _notebook.tex notebook.tex
-rm genLatex.exe
+[ -f genLatex.exe ] && rm genLatex.exe
 mv hsh.temp ./temp/h || true
 mv temp.cpp ./temp/h || true
 rm ./temp -r

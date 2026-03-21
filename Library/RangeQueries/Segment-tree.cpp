@@ -1,60 +1,75 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define ll long long int //LATEX_IGNORED_LINE
-const ll INF = (ll)4e18; //LATEX_IGNORED_LINE
+const int MAXN = 1e6 + 5;
+int seg[4*MAXN];
 
-struct SegTreeMin {
-    int n;
-    vector<ll> st;
+int query(int no, int l, int r, int a, int b){
+	if(b <  l || r <  a) return 0;
+	if(a <= l && r <= b) return seg[no];
 
-    SegTreeMin() {}
-    SegTreeMin(const vector<ll>& a) { init(a); }
+	int m=(l+r)/2, e=no*2, d=no*2+1;
 
-    void init(const vector<ll>& a) {
-        n = (int)a.size();
-        st.assign(4 * n + 5, INF);
-        build(1, 0, n - 1, a);
-    }
+	return query(e, l, m, a, b) + query(d, m+1, r, a, b);
+}
 
-    void build(int p, int l, int r, const vector<ll>& a) {
-        if (l == r) {
-            st[p] = a[l];
-            return;
-        }
+void update(int no, int l, int r, int pos, int v){
+	if(pos < l || r < pos) return;
+	if(l == r){seg[no] = v; return; }
 
-        int m = (l + r) / 2;
-        build(2 * p, l, m, a);
-        build(2 * p + 1, m + 1, r, a);
-        st[p] = min(st[2 * p], st[2 * p + 1]);
-    }
+	int m=(l+r)/2, e=no*2, d=no*2+1;
 
-    ll query(int p, int l, int r, int i, int j) {
-        if (j < l || r < i) return INF;
-        if (i <= l && r <= j) return st[p];
+	update(e, l,   m, pos, v);
+	update(d, m+1, r, pos, v);
 
-        int m = (l + r) / 2;
-        return min(query(2 * p, l, m, i, j), query(2 * p + 1, m + 1, r, i, j));
-    }
+	seg[no] = seg[e] + seg[d];
+}
 
-    void update(int p, int l, int r, int idx, ll val) {
-        if (l == r) {
-            st[p] = val;
-            return;
-        }
+void build(int no, int l, int r, vector<int> &lista){
+	if(l == r){ seg[no] = lista[l]; return; }
 
-        int m = (l + r) / 2;
-        if (idx <= m) update(2 * p, l, m, idx, val);
-        else update(2 * p + 1, m + 1, r, idx, val);
+	int m=(l+r)/2, e=no*2, d=no*2+1;
 
-        st[p] = min(st[2 * p], st[2 * p + 1]);
-    }
+	build(e, l,   m, lista);
+	build(d, m+1, r, lista);
+	
+	seg[no] = seg[e] + seg[d];
+}
 
-    ll query(int l, int r) {
-        return query(1, 0, n - 1, l, r);
-    }
+// only if necessary
+int lower_bound_prefix(int no, int l, int r, int k){
+    if(seg[no] < k) return -1;   // not enough sum in this segment
+    if(l == r) return l;
 
-    void update(int idx, ll val) {
-        update(1, 0, n - 1, idx, val);
-    }
-};
+    int m = (l + r) / 2, e = no * 2, d = no * 2 + 1;
+
+    if(seg[e] >= k) return lower_bound_prefix(e, l, m, k);
+    return lower_bound_prefix(d, m + 1, r, k - seg[e]);
+}
+
+int lower_bound_prefix(int n /*tree size*/, int k){
+    if(k <= 0) return 1;
+    return lower_bound_prefix(1, 1, n, k);
+}
+
+/*LATEX_DESC_BEGIN***************************
+
+Code by SamuellH12
+-> Segment Tree com:
+	- Query em Range
+	- Update em Ponto
+
+build (1, 1, n, lista);
+query (1, 1, n, a, b);
+update(1, 1, n, i, x);
+
+|   n    | tamanho
+| [a, b] | intervalo da busca 
+|   i    | posição a ser modificada
+|   x    | novo valor da posição i
+| lista  | vector de elementos originais
+
+Build:  O(N)
+Query:  O(log N)
+Update: O(log N)
+*****************************LATEX_DESC_END*/

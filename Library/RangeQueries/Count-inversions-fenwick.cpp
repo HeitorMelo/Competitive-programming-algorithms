@@ -3,27 +3,6 @@ using namespace std;
 
 #define ll long long int //LATEX_IGNORED_LINE
 
-struct Fenwick {
-    int n;
-    vector<ll> bit;
-
-    Fenwick(int n): n(n), bit(n + 1, 0) {}
-
-    void add(int idx, ll val) {
-        for (; idx <= n; idx += idx & -idx) {
-            bit[idx] += val;
-        }
-    }
-
-    ll pref_sum(int idx) const {
-        ll ans = 0;
-        for (; idx > 0; idx -= idx & -idx) {
-            ans += bit[idx];
-        }
-        return ans;
-    }
-};
-
 ll count_inversions_fenwick(vector<int> a) {
     if (a.empty()) return 0;
 

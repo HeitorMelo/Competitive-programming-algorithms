@@ -1,75 +1,61 @@
+/*LATEX_DESC_BEGIN***************************
+
+Segment Tree (Point Update, Range Query)
+ - Complexidade: O(log N) para update e query.
+ - Memória: O(4*N)
+ - Requisitos: 
+    - NODE deve ter: static merge(L, R), apply(V), e construtor identidade.
+
+
+Créditos: Por lua (Lua Guimarães)
+Fonte: github.com/src-lua/lgf-cpLib
+*****************************LATEX_DESC_END*/
+
+#pragma once
 #include <bits/stdc++.h>
 using namespace std;
 
-const int MAXN = 1e6 + 5;
-int seg[4*MAXN];
+template<typename NODE>
+struct SegTree {
+    int N;
+    vector<NODE> seg;
 
-int query(int no, int l, int r, int a, int b){
-	if(b <  l || r <  a) return 0;
-	if(a <= l && r <= b) return seg[no];
+    SegTree(int n) : N(n), seg(4 * n) {}
 
-	int m=(l+r)/2, e=no*2, d=no*2+1;
+    SegTree(const vector<int>& v) : N(v.size()), seg(4 * v.size()) {
+        build(1, 0, N - 1, v);
+    }
 
-	return query(e, l, m, a, b) + query(d, m+1, r, a, b);
-}
+    void build(int no, int l, int r, const vector<int>& v) {
+        if (l == r) {
+            seg[no] = NODE(v[l]); 
+            return;
+        }
+        int m = (l + r) >> 1;
+        build(no << 1, l, m, v);
+        build((no << 1) | 1, m + 1, r, v);
+        seg[no] = NODE::merge(seg[no << 1], seg[(no << 1) | 1]);
+    }
 
-void update(int no, int l, int r, int pos, int v){
-	if(pos < l || r < pos) return;
-	if(l == r){seg[no] = v; return; }
+    void update(int no, int l, int r, int idx, int val) {
+        if (l == r) {
+            seg[no].apply(val);
+            return;
+        }
+        int m = (l + r) >> 1;
+        if (idx <= m) update(no << 1, l, m, idx, val);
+        else update((no << 1) | 1, m + 1, r, idx, val);
+        seg[no] = NODE::merge(seg[no << 1], seg[(no << 1) | 1]);
+    }
 
-	int m=(l+r)/2, e=no*2, d=no*2+1;
+    NODE query(int no, int l, int r, int a, int b) {
+        if (b < l || r < a) return NODE();
+        if (a <= l && r <= b) return seg[no];
+        int m = (l + r) >> 1;
+        return NODE::merge(query(no << 1, l, m, a, b),
+                           query((no << 1) | 1, m + 1, r, a, b));
+    }
 
-	update(e, l,   m, pos, v);
-	update(d, m+1, r, pos, v);
-
-	seg[no] = seg[e] + seg[d];
-}
-
-void build(int no, int l, int r, vector<int> &lista){
-	if(l == r){ seg[no] = lista[l]; return; }
-
-	int m=(l+r)/2, e=no*2, d=no*2+1;
-
-	build(e, l,   m, lista);
-	build(d, m+1, r, lista);
-	
-	seg[no] = seg[e] + seg[d];
-}
-
-// only if necessary
-int lower_bound_prefix(int no, int l, int r, int k){
-    if(seg[no] < k) return -1;   // not enough sum in this segment
-    if(l == r) return l;
-
-    int m = (l + r) / 2, e = no * 2, d = no * 2 + 1;
-
-    if(seg[e] >= k) return lower_bound_prefix(e, l, m, k);
-    return lower_bound_prefix(d, m + 1, r, k - seg[e]);
-}
-
-int lower_bound_prefix(int n /*tree size*/, int k){
-    if(k <= 0) return 1;
-    return lower_bound_prefix(1, 1, n, k);
-}
-
-/*LATEX_DESC_BEGIN***************************
-
-Code by SamuellH12
--> Segment Tree com:
-	- Query em Range
-	- Update em Ponto
-
-build (1, 1, n, lista);
-query (1, 1, n, a, b);
-update(1, 1, n, i, x);
-
-|   n    | tamanho
-| [a, b] | intervalo da busca 
-|   i    | posição a ser modificada
-|   x    | novo valor da posição i
-| lista  | vector de elementos originais
-
-Build:  O(N)
-Query:  O(log N)
-Update: O(log N)
-*****************************LATEX_DESC_END*/
+    void update(int idx, int val) { update(1, 0, N - 1, idx, val); }
+    NODE query(int l, int r) { return query(1, 0, N - 1, l, r); }
+};

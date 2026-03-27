@@ -172,12 +172,9 @@
 
 \newcommand{\blockdesc}[1]{%
   \par\vspace{-5pt}
-  \noindent
-  \begin{adjustbox}{minipage=\dimexpr\linewidth-2\fboxsep-2\fboxrule}
-    \begin{blockdescenv}
-      #1
-    \end{blockdescenv}
-  \end{adjustbox}
+  \begin{blockdescenv}
+    #1
+  \end{blockdescenv}
   \vspace{1pt}
 }
 %%% BLOCK_DESC END %%%
@@ -199,7 +196,7 @@
 \begin{landscape}
 \begin{multicols*}{2}  % MUDE A QUANTIDADE DE COLUNAS AQUI
 \raggedcolumns 
-\interlinepenalty=10000
+% \interlinepenalty=10000
 
 \maketitle
 \vspace{-13ex}

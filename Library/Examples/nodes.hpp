@@ -1,13 +1,12 @@
-/*LATEX_DESC_BEGIN***************************
-
+/*
 Colecao de Nodes para Segment Tree / Sparse Table
 Copie o Node que voce precisa para o seu codigo.
 Requisitos: Cada Node deve ter static merge() e construtor identidade.
 Para Lazy: Node deve ter apply(TAG, l, r).
 
-Créditos: Por lua (Lua Guimarães)
+Créditos: Modificado de lua (Lua Guimarães)
 Fonte: github.com/src-lua/lgf-cpLib
-*****************************LATEX_DESC_END*/
+*/
 
 // NODES BASICOS (Idempotentes - para Sparse Table tambem)
 

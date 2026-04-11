@@ -13,9 +13,12 @@ vector<vector<int>> memo;
 // max sum(v) with sum(w) <= remW
 int subsum(int id, int remW) {
     if ((id == w.size()) || (remW == 0)) return 0;
+
     int &ans = memo[id][remW];
     if (ans != -1) return ans;
+
     if (w[id] > remW) return ans = subsum(id+1, remW);
+
     return ans = max(subsum(id + 1, remW), 
                      v[id]+subsum(id+1, remW-w[id]));
 }
